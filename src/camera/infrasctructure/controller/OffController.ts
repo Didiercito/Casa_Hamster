@@ -3,14 +3,15 @@ import { CameraOffUseCase } from "../../application/CameraOffUseCase";
 
 
 export class OffController {
-    constructor( private cameraOffUseCase: CameraOffUseCase) {}
+    constructor(private cameraOffUseCase: CameraOffUseCase) {}
 
-    async Off (req: Request, res:Response):Promise<void>{
+    async run(req: Request, res: Response): Promise<void> {
         try {
-            await this.cameraOffUseCase.execute()
-            res.status(200).json({status: 'Camera is Off'})
-        } catch (error: any) {
-            res.status(500).send('Internal Server Error: ');
+            await this.cameraOffUseCase.execute();
+            res.json({ status: 'Camera is off' });
+        } catch (error) {
+            console.error('Error turning camera off:', error);
+            res.status(500).json({ error: 'Internal Server Error' });
         }
     }
 }

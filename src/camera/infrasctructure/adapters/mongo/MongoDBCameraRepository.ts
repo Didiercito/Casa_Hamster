@@ -10,9 +10,9 @@ export class MongoDBCameraRepository implements CameraRepository {
 
         const cameraCollection = dbMongo.collection('cameras');
         await cameraCollection.updateOne(
-            { _id: new ObjectId("your_camera_id") }, 
+            { _id: new ObjectId("60d5ec49f0c9b15de4c88c8b") }, 
             { $set: { isCameraOn: this.isCameraOn } },
-            { upsert: true } 
+            { upsert: true }
         );
 
         console.log('Camera is turned on.');
@@ -23,18 +23,11 @@ export class MongoDBCameraRepository implements CameraRepository {
 
         const cameraCollection = dbMongo.collection('cameras');
         await cameraCollection.updateOne(
-            { _id: new ObjectId("your_camera_id") },
+            { _id: new ObjectId("60d5ec49f0c9b15de4c88c8b") }, 
             { $set: { isCameraOn: this.isCameraOn } },
-            { upsert: true } 
+            { upsert: true }
         );
 
         console.log('Camera is turned off.');
-    }
-
-    async getStatus(): Promise<boolean> {
-        const cameraCollection = dbMongo.collection('cameras');
-        const camera = await cameraCollection.findOne({ _id: new ObjectId("your_camera_id") });
-
-        return camera ? camera.isCameraOn : false;
     }
 }

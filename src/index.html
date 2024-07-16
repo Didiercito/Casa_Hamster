@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webcam Control</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      background-color: #f0f0f0;
+      margin: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    .button-container {
+      margin: 20px;
+    }
+    button {
+      padding: 10px 20px;
+      font-size: 16px;
+      margin: 5px;
+      cursor: pointer;
+      border: none;
+      border-radius: 5px;
+    }
+    button#start {
+      background-color: #4CAF50;
+      color: white;
+    }
+    button#stop {
+      background-color: #f44336;
+      color: white;
+    }
+    video {
+      margin-top: 20px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      display: none;
+    }
+    img {
+      margin-top: 20px;
+      border: 2px solid #333;
+      border-radius: 10px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Webcam Control</h1>
+  <div class="button-container">
+    <button id="start">Encender Cámara</button>
+    <button id="stop">Apagar Cámara</button>
+  </div>
+  <video id="webcam" width="1280" height="720" autoplay></video>
+
+  <script>
+    let webcamStream;
+
+    document.getElementById('start').addEventListener('click', async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/camera/on', { method: 'GET' });
+        const data = await response.json();
+        console.log(data);
+
+        webcamStream = await navigator.mediaDevices.getUserMedia({ video: true });
+        const videoElement = document.getElementById('webcam');
+        videoElement.srcObject = webcamStream;
+        videoElement.style.display = 'block';
+      } catch (err) {
+        console.error('Error encendiendo la cámara:', err);
+      }
+    });
+
+    document.getElementById('stop').addEventListener('click', async () => {
+      try {
+        const response = await fetch('http://localhost:8080/api/v1/camera/off', { method: 'GET' });
+        const data = await response.json();
+        console.log(data);
+
+        const videoElement = document.getElementById('webcam');
+        videoElement.style.display = 'none';
+        if (webcamStream) {
+          webcamStream.getTracks().forEach(track => track.stop());
+        }
+      } catch (err) {
+        console.error('Error apagando la cámara:', err);
+      }
+    });
+  </script>
+</body>
+</html>

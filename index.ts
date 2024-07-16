@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import { dbMongo } from './src/database/mongo/mongodb';
 import { UserRouter } from './src/auth/infrasctucture/router/UserRoutes';
 import { AnimalRouter } from './src/animal/infrasctucture/routes/AnimalRoutes';
-
+import { CameraRouter } from './src/camera/infrasctructure/routes/CameraRoutes';
 
 dotenv.config();
 dbMongo.on("error", console.error.bind(console, "connection error:"));
@@ -18,6 +18,7 @@ app.use(express.json());
 
 app.use('/api/v1/auth', UserRouter);
 app.use('/api/v1/animal', AnimalRouter);
+app.use('/api/v1/camera', CameraRouter);
 
 
 app.listen(PORT, () => {

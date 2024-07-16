@@ -18,7 +18,8 @@
     "express": "^4.19.2",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.4.5",
-    "mysql2": "^3.10.2"
+    "mysql2": "^3.10.2",
+    "node-webcam": "^0.8.2"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.2",
