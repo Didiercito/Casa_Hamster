@@ -1,7 +1,6 @@
 import { testConnection } from '../../../../database/mysql/mysqldb';
 import { User } from '../../../domain/User';
 import { UserRepository } from '../../../domain/UserRepository';
-import bcrypt from 'bcrypt';
 
 export class MysqlUserRepository implements UserRepository {
     async register(user: User): Promise<void> {
@@ -21,11 +20,6 @@ export class MysqlUserRepository implements UserRepository {
         }
 
         const user = users[0];
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            return null;
-        }
-
         return new User(user.id, user.name, user.lastname, user.email, user.password, user.animals);
     }
 
@@ -43,5 +37,11 @@ export class MysqlUserRepository implements UserRepository {
             user.password,
             user.animals
         ));
+    }
+
+    async logout(id: string): Promise<void> {
+        const connection = await testConnection();
+        const sql = 'UPDATE users SET token = NULL WHERE id = ?'; 
+        await connection.execute(sql, [id]);
     }
 }

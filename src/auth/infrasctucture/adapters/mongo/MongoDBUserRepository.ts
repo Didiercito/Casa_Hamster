@@ -2,6 +2,7 @@ import { dbMongo } from "../../../../database/mongo/mongodb";
 import { User } from "../../../domain/User";
 import { UserRepository } from "../../../domain/UserRepository";
 import bcrypt from 'bcrypt';
+import { ObjectId } from 'mongodb'; // Importar ObjectId desde 'mongodb'
 
 export class MongodbUserRepository implements UserRepository {
 
@@ -35,5 +36,13 @@ export class MongodbUserRepository implements UserRepository {
             user.password,
             user.animals
         ));
+    }
+
+    async logout(id: string): Promise<void> {
+        const userCollection = dbMongo.collection('users');
+        await userCollection.updateOne(
+            { _id: new ObjectId(id) }, 
+            { $set: { token: null } } 
+        );
     }
 }
