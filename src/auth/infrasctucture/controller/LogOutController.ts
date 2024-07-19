@@ -5,10 +5,15 @@ export class LogOutController {
     constructor(private logOutUseCase: LogOutUseCase) {}
 
     async run(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const token = req.headers.authorization?.split(' ')[1];
+
+        if (!token) {
+            res.status(400).json({ message: 'Token no proporcionado' });
+            return;
+        }
 
         try {
-            await this.logOutUseCase.execute(id);
+            await this.logOutUseCase.execute(token);
             res.status(200).json({ message: 'Usuario ha hecho logout exitosamente' });
         } catch (error) {
             console.error('Error en logout:', error);

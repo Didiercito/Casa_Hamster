@@ -20,7 +20,7 @@ export class MysqlUserRepository implements UserRepository {
         }
 
         const user = users[0];
-        return new User(user.id, user.name, user.lastname, user.email, user.password, user.animals);
+        return new User(user.id, user.name, user.lastname, user.email, user.password, user.animals, user.token);
     }
 
     async getAllUsers(): Promise<User[]> {
@@ -35,13 +35,20 @@ export class MysqlUserRepository implements UserRepository {
             user.lastname,
             user.email,
             user.password,
-            user.animals
+            user.animals,
+            user.token
         ));
     }
 
-    async logout(id: string): Promise<void> {
+    async logout(token: string): Promise<void> {
         const connection = await testConnection();
-        const sql = 'UPDATE users SET token = NULL WHERE id = ?'; 
-        await connection.execute(sql, [id]);
+        const sql = 'UPDATE users SET token = NULL WHERE token = ?'; 
+        await connection.execute(sql, [token]);
+    }
+
+    async updateToken(id: string, token: string | null): Promise<void> {
+        const connection = await testConnection();
+        const sql = 'UPDATE users SET token = ? WHERE id = ?';
+        await connection.execute(sql, [token, id]);
     }
 }

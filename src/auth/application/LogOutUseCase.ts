@@ -7,11 +7,11 @@ export class LogOutUseCase {
         this.userRepository = userRepository; 
     }
 
-    async execute(id: string): Promise<void> {
+    async execute(token: string): Promise<void> {
         try {
-            await this.userRepository.logout(id);
+            await this.userRepository.logout(token);
         } catch (error) {
-            throw new Error(`Error en LogoutUseCase`);
+            throw new Error(`Error en LogoutUseCase:`);
         }
     }
 }

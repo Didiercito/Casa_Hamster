@@ -1,4 +1,3 @@
-import { User } from "../domain/User";
 import { UserRepository } from "../domain/UserRepository";
 import bcrypt from 'bcrypt';
 import { generateToken } from "../../middlewares/Auth";
@@ -28,6 +27,9 @@ export class LoginUserUseCase {
         if (!token) {
             throw new Error("Token generation failed");
         }
+
+        user.token = token;
+        await this.userRepository.updateToken(user.id, token);
 
         return token;
     }

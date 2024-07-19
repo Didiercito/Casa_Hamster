@@ -11,7 +11,7 @@ export class RegisterAnimalController {
             const userId = (req as any).user.id; // Obtener el ID del usuario desde la solicitud
 
             const animal = new Animal(
-                '', // ID del animal, puede ser un string vacío si se genera automáticamente en la base de datos
+                '', 
                 name,
                 breed,
                 species,

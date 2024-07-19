@@ -7,13 +7,15 @@ export class User {
     public email: string;
     public password: string;
     public animals: Animal[] = [];
+    public token : string | null;
 
-    public constructor(id: string, name: string, lastname: string, email: string, password: string, animals: Animal[] = []) {
+    public constructor(id: string, name: string, lastname: string, email: string, password: string, animals: Animal[] = [], token: string | null = null) {
         this.id = id;
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
         this.animals = animals;
+        this.token = token
     }
 }

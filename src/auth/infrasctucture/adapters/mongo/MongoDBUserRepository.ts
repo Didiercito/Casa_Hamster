@@ -2,10 +2,9 @@ import { dbMongo } from "../../../../database/mongo/mongodb";
 import { User } from "../../../domain/User";
 import { UserRepository } from "../../../domain/UserRepository";
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb'; // Importar ObjectId desde 'mongodb'
+import { ObjectId } from 'mongodb';
 
 export class MongodbUserRepository implements UserRepository {
-
     async register(user: User): Promise<void> {
         const userCollection = dbMongo.collection('users');
         await userCollection.insertOne(user);
@@ -18,7 +17,7 @@ export class MongodbUserRepository implements UserRepository {
         if (user) {
             const isPasswordValid = await bcrypt.compare(password, user.password);
             if (isPasswordValid) {
-                return new User(user._id.toString(), user.name, user.lastname, user.email, user.password, user.animals);
+                return new User(user._id.toString(), user.name, user.lastname, user.email, user.password, user.animals, user.token);
             }
         }
         
@@ -34,15 +33,24 @@ export class MongodbUserRepository implements UserRepository {
             user.lastname,
             user.email,
             user.password,
-            user.animals
+            user.animals,
+            user.token
         ));
     }
 
-    async logout(id: string): Promise<void> {
+    async logout(token: string): Promise<void> {
         const userCollection = dbMongo.collection('users');
         await userCollection.updateOne(
-            { _id: new ObjectId(id) }, 
-            { $set: { token: null } } 
+            { token }, 
+            { $set: { token: null } }
+        );
+    }
+
+    async updateToken(id: string, token: string | null): Promise<void> {
+        const userCollection = dbMongo.collection('users');
+        await userCollection.updateOne(
+            { _id: new ObjectId(id) },
+            { $set: { token } }
         );
     }
 }
