@@ -7,7 +7,7 @@ const mongoURI = process.env.MONGO_URI;
 
 mongoose.connect(mongoURI as string)
     .then(() => {
-        console.log("MongoDB connected");
+        console.log("");
     })
     .catch((error) => {
         console.error(error);

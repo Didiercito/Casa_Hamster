@@ -1,6 +1,6 @@
-import { testConnection } from '../../../../database/mysql/mysqldb';
 import { Animal } from '../../../domain/Animal';
 import { AnimalRepository } from '../../../domain/AnimalRepository';
+import { testConnection } from '../../../../database/mysql/mysqldb';
 
 export class MysqlAnimalRepository implements AnimalRepository {
     async getAll(): Promise<Animal[]> {
@@ -25,8 +25,9 @@ export class MysqlAnimalRepository implements AnimalRepository {
 
     async registerAnimal(animal: Animal): Promise<void> {
         const connection = await testConnection();
-        const sql = 'INSERT INTO animals (id, name, breed, species, age, gender, color, size, ownerId, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        await connection.execute(sql, [animal.id, animal.name, animal.breed, animal.species, animal.age, animal.gender, animal.color, animal.size, animal.ownerId, animal.notes]);
+
+        const sql = 'INSERT INTO animals (name, breed, species, age, gender, color, size, ownerId, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        await connection.execute(sql, [animal.name, animal.breed, animal.species, animal.age, animal.gender, animal.color, animal.size, animal.ownerId, animal.notes]);
     }
 
     async getById(id: string): Promise<Animal | null> {

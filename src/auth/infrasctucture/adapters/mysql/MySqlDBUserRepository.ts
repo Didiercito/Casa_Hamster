@@ -1,12 +1,14 @@
-import { testConnection } from '../../../../database/mysql/mysqldb';
 import { User } from '../../../domain/User';
 import { UserRepository } from '../../../domain/UserRepository';
+import { testConnection } from '../../../../database/mysql/mysqldb';
 
 export class MysqlUserRepository implements UserRepository {
     async register(user: User): Promise<void> {
         const connection = await testConnection();
-        const sql = 'INSERT INTO users (id, name, lastname, email, password) VALUES (?, ?, ?, ?, ?)';
-        await connection.execute(sql, [user.id, user.name, user.lastname, user.email, user.password]);
+    
+
+        const sql = 'INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)';
+        await connection.execute(sql, [user.name, user.lastname, user.email, user.password]);
     }
 
     async login(email: string, password: string): Promise<User | null> {
