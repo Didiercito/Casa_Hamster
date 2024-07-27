@@ -10,14 +10,7 @@ import { AnimalRepository } from "../domain/AnimalRepository";
 import dotenv from 'dotenv';
 dotenv.config();
 
-let animalRepository: AnimalRepository;
-const animalRepositoryType = process.env.DB_TYPE;
-
-if (animalRepositoryType === "mysql2") {
-    animalRepository = new MysqlAnimalRepository();
-} else {
-    throw new Error("Invalid DB_TYPE specified. Only 'mysql' is supported.");
-}
+const animalRepository: AnimalRepository = new MysqlAnimalRepository();
 
 export const registerAnimalUseCase = new RegisterAnimalUseCase(animalRepository);
 export const getAllAnimalUseCase = new GetAllAnimalUseCase(animalRepository);

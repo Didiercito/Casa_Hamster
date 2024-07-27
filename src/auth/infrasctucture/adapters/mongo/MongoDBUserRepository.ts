@@ -53,4 +53,23 @@ export class MongodbUserRepository implements UserRepository {
             { $set: { token } }
         );
     }
+
+    async getById(id: string): Promise<User | null> {
+        const userCollection = dbMongo.collection('users');
+        const user = await userCollection.findOne({ _id: new ObjectId(id) });
+
+        if (user) {
+            return new User(
+                user._id.toString(),
+                user.name,
+                user.lastname,
+                user.email,
+                user.password,
+                user.animals,
+                user.token
+            );
+        }
+
+        return null;
+    }
 }

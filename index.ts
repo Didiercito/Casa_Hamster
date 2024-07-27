@@ -5,18 +5,32 @@ import { testConnection } from './src/database/mysql/mysqldb';
 import { UserRouter } from './src/auth/infrasctucture/router/UserRoutes';
 import { AnimalRouter } from './src/animal/infrasctucture/routes/AnimalRoutes';
 import { CameraRouter } from './src/camera/infrasctructure/routes/CameraRoutes';
+// import { DHT11Router } from './src/dht11/infrasctucture/routes/dht11Routes';
 
 dotenv.config();
-testConnection();
+
 const app = express();
-const PORT = process.env.PORT;
+const PORT = process.env.PORT || 8080;
+
 app.use(cors());
 app.use(express.json());
 
 app.use('/api/v1/auth', UserRouter);
 app.use('/api/v1/animal', AnimalRouter);
 app.use('/api/v1/camera', CameraRouter);
+// app.use('/api/v1/dht11', DHT11Router);
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-});
+async function startServer() {
+    try {
+        await testConnection();
+        console.log('MySQL connected');
+        app.listen(PORT, () => {
+            console.log(`Server is running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('Error initializing database:', error);
+        process.exit(1); // Exit process if database initialization fails
+    }
+}
+
+startServer();

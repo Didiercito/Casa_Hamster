@@ -95,3 +95,97 @@
   </script>
 </body>
 </html>
+
+
+#include <WiFi.h>
+  #include <PubSubClient.h>
+  #include <DHT.h>
+  
+  // Configura el DHT11
+  #define DHTPIN 4       // Pin GPIO al que está conectado el DATA del DHT11
+  #define DHTTYPE DHT11  // Tipo de sensor
+  DHT dht(DHTPIN, DHTTYPE);
+  
+  // Configura la conexión WiFi
+  const char* ssid = "Megacable_2.4G_2207";
+  const char* password = "DzPA2yz2";
+  
+  const char* mqtt_server = "54.175.246.36";
+  const int mqtt_port = 1883;  // Cambia esto si usas un puerto diferente
+  const char* mqtt_user = "admin";
+  const char* mqtt_password = "admin";
+  
+  WiFiClient espClient;
+  PubSubClient client(espClient);
+  
+  // Función para conectar al WiFi
+  void setup_wifi() {
+    delay(10);
+    Serial.println();
+    Serial.print("Conectando a ");
+    Serial.println(ssid);
+  
+    WiFi.begin(ssid, password);
+  
+    while (WiFi.status() != WL_CONNECTED) {
+      delay(500);
+      Serial.print(".");
+    }
+  
+    Serial.println("");
+    Serial.println("WiFi conectado");
+    Serial.println("Dirección IP: ");
+    Serial.println(WiFi.localIP());
+  }
+  
+  // Función para conectar al broker MQTT
+  void reconnect() {
+    while (!client.connected()) {
+      Serial.print("Intentando conectar al broker MQTT...");
+      if (client.connect("ESP32Client", mqtt_user, mqtt_password)) {
+        Serial.println("conectado");
+      } else {
+        Serial.print("fallo, rc=");
+        Serial.print(client.state());
+        Serial.println(" intentando de nuevo en 5 segundos");
+        delay(5000);
+      }
+    }
+  }
+  
+  void setup() {
+    Serial.begin(9600);
+    setup_wifi();
+    client.setServer(mqtt_server, mqtt_port);
+    dht.begin();
+  }
+  
+  void loop() {
+    if (!client.connected()) {
+      reconnect();
+    }
+    client.loop();
+  
+    // Lee la humedad y la temperatura
+    float h = dht.readHumidity();
+    float t = dht.readTemperature();
+  
+    // Verifica si la lectura ha fallado
+    if (isnan(h) || isnan(t)) {
+      Serial.println("¡Error al leer el sensor DHT11!");
+      return;
+    }
+  
+    // Publica los valores en el broker MQTT
+    char tempStr[8];
+    dtostrf(t, 1, 2, tempStr);
+    client.publish("sensor/temperatura", tempStr);
+  
+    char humStr[8];
+    dtostrf(h, 1, 2, humStr);
+    client.publish("sensor/humedad", humStr);
+  
+    // Espera un poco antes de la siguiente lectura
+    delay(2000);
+  }
+  

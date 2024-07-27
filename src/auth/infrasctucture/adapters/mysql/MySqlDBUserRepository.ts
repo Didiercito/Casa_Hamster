@@ -1,12 +1,11 @@
 import { User } from '../../../domain/User';
+import { Animal } from '../../../../animal/domain/Animal';
 import { UserRepository } from '../../../domain/UserRepository';
 import { testConnection } from '../../../../database/mysql/mysqldb';
 
 export class MysqlUserRepository implements UserRepository {
     async register(user: User): Promise<void> {
         const connection = await testConnection();
-    
-
         const sql = 'INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)';
         await connection.execute(sql, [user.name, user.lastname, user.email, user.password]);
     }
@@ -52,5 +51,37 @@ export class MysqlUserRepository implements UserRepository {
         const connection = await testConnection();
         const sql = 'UPDATE users SET token = ? WHERE id = ?';
         await connection.execute(sql, [token, id]);
+    }
+
+    async getById(id: string): Promise<User | null> {
+        const connection = await testConnection();
+        const sql = 'SELECT * FROM users WHERE id = ?';
+        const [rows] = await connection.execute(sql, [id]);
+        const users = rows as any[];
+
+        if (users.length === 0) {
+            return null;
+        }
+
+        const user = users[0];
+
+        const animalSql = 'SELECT * FROM animals WHERE ownerId = ?';
+        const [animalsRows] = await connection.execute(animalSql, [id]);
+        const animals = animalsRows as any[];
+
+        const mappedAnimals = animals.map(animal => new Animal(
+            animal.id,
+            animal.name,
+            animal.type,
+            animal.age,
+            animal.userId,
+            animal.breed,
+            animal.species,
+            animal.gender,
+            animal.color,
+            animal.notes
+        ));
+
+        return new User(user.id, user.name, user.lastname, user.email, user.password, mappedAnimals, user.token);
     }
 }

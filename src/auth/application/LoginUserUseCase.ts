@@ -9,7 +9,7 @@ export class LoginUserUseCase {
         this.userRepository = userRepository;
     }
 
-    public async login(email: string, password: string): Promise<string> {
+    public async login(email: string, password: string): Promise<{ id: string, token: string }> {
         const user = await this.userRepository.login(email, password);
 
         if (!user) {
@@ -31,6 +31,6 @@ export class LoginUserUseCase {
         user.token = token;
         await this.userRepository.updateToken(user.id, token);
 
-        return token;
+        return { id: user.id, token };
     }
 }

@@ -7,11 +7,12 @@ export class LoginController {
     async run(req: Request, res: Response) {
         try {
             const { email, password } = req.body;
-            const token = await this.loginUserUseCase.login(email, password);
+            const { id, token } = await this.loginUserUseCase.login(email, password);
 
             res.status(200).json({
                 message: 'User logged in successfully',
                 success: true,
+                id,  
                 token,
             });
         } catch (error) {
