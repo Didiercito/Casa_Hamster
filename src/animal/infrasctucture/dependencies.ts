@@ -7,9 +7,6 @@ import { GetByIdAnimalUseCase } from "../application/GetByIdAnimalUseCase";
 import { MysqlAnimalRepository } from "./adapters/mysql/MySqlDBAnimalRepository";
 import { AnimalRepository } from "../domain/AnimalRepository";
 
-import dotenv from 'dotenv';
-dotenv.config();
-
 const animalRepository: AnimalRepository = new MysqlAnimalRepository();
 
 export const registerAnimalUseCase = new RegisterAnimalUseCase(animalRepository);

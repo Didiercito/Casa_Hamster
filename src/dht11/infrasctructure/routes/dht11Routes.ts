@@ -1,10 +1,12 @@
 import { Router } from "express";
-import { getDHT11Controller,readDHT11Controller, updateDHT11Controller } from "../dependencies";
+import { getAllDataDHT11Controller, getDHT11ByIdController, saveDataDHT11Controller} from "../dependencies";
 
-export const DHT11Router = Router()
 
-DHT11Router.get('/:id', getDHT11Controller.getSensorData.bind(getDHT11Controller));
+export const dhtRouter = Router();
 
-DHT11Router.get('/read/:id', readDHT11Controller.readSensorData.bind(readDHT11Controller));
+dhtRouter.get('/all', getAllDataDHT11Controller.run.bind(getAllDataDHT11Controller));
 
-DHT11Router.put('/update/:id', updateDHT11Controller.updateSensorData.bind(updateDHT11Controller)); 
+dhtRouter.get('/data/:id', getDHT11ByIdController.run.bind(getDHT11ByIdController));
+
+dhtRouter.post('/data', saveDataDHT11Controller.run.bind(saveDataDHT11Controller));
+

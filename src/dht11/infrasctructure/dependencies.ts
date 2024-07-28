@@ -1,29 +1,18 @@
-import { GetDHT11DataUseCase } from "../application/GetSensorDataUseCase";
-import { ReadDHT11DataUseCase } from "../application/ReadSensorDataUseCase";
-import { UpDataDHT11UseCase } from "../application/UpdateSensorDataUseCase";
-import { GetDHT11Controller } from "./controller/GetSensorDataController";
-import { ReadDHT11Controller } from "./controller/ReadSensorDataController";
-import { UpdateDHT11Controller } from "./controller/UpdateSensorDataController";
-import { DHT11Repository } from "../domain/dht11Repository";
+import { GetDHT11ByIdUseCase } from "../application/GetDHT11DataByIdUseCase";
+import { GetDataDHT11UseCase } from "../application/GetDHT11DataUseCase";
+import { SaveDHT11DataUseCase } from "../application/SaveDHT11DataUseCase";
+import { GetAllDataDHT11Controller } from "./controller/GetAllDataDHT11Controller";
+import { GetDHT11ByIdController } from "./controller/GetByIdDataDHT11Controller";
+import { SaveDataDHT11Controller } from "./controller/SaveDataDHT11Controller";
 import { MySQLDHT11Repository } from "./adapters/mysql/MySQLDHT11Repository";
-import { MongoDHT11Repository } from "./adapters/mongo/MongoDBDHT11Repository";
-import dotenv from 'dotenv';
 
-dotenv.config();
 
-let dht11Repository: DHT11Repository; 
-const dht11RepositoryType = process.env.DB_TYPE;
+const dht11Repository: MySQLDHT11Repository = new MySQLDHT11Repository;
 
-if(dht11RepositoryType === "mysql2"){
-    dht11Repository = new MySQLDHT11Repository(); 
-}else{
-    dht11Repository = new MongoDHT11Repository(); 
-}
+export const getDHT11ByIdUseCase = new GetDHT11ByIdUseCase(dht11Repository);
+export const getDataDHT11UseCase = new GetDataDHT11UseCase(dht11Repository);
+export const saveDHT11DataUseCase = new SaveDHT11DataUseCase(dht11Repository);
 
-export const getDHT11DataUseCase = new GetDHT11DataUseCase(dht11Repository);
-export const readDHT11DataUseCase = new ReadDHT11DataUseCase(dht11Repository);
-export const upDataDHT11UseCase = new UpDataDHT11UseCase(dht11Repository);
-
-export const getDHT11Controller = new GetDHT11Controller(getDHT11DataUseCase);
-export const readDHT11Controller = new ReadDHT11Controller(readDHT11DataUseCase);
-export const updateDHT11Controller = new UpdateDHT11Controller(upDataDHT11UseCase)
+export const getAllDataDHT11Controller = new GetAllDataDHT11Controller(getDataDHT11UseCase);
+export const getDHT11ByIdController = new GetDHT11ByIdController(getDHT11ByIdUseCase);
+export const saveDataDHT11Controller = new SaveDataDHT11Controller(saveDHT11DataUseCase)
