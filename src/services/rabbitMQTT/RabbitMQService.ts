@@ -40,7 +40,7 @@ export class MqttService {
 
     this.client.on('message', async (topic: string, message: Buffer) => {
       const messageString = message.toString();
-      console.log('Mensaje recibido:', messageString);
+      // console.log('Mensaje recibido:', messageString);
 
       if (this.onMessageCallback) {
         this.onMessageCallback(messageString);

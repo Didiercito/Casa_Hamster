@@ -31,6 +31,13 @@ export class LoginUserUseCase {
         user.token = token;
         await this.userRepository.updateToken(user.id, token);
 
+        await this.postLoginFunction(user.id);
+
         return { id: user.id, token };
     }
+
+    private async postLoginFunction(userId: string) {
+        console.log(`Función ejecutada después del inicio de sesión para el usuario ${userId}`);
+    }
 }
+

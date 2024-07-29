@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperatura y Humedad</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f0f0f0;
+            margin: 0;
+        }
+        .container {
+            background: #fff;
+            padding: 10px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        .gauge {
+            margin: 10px 0;
+            height: 150px;
+        }
+    </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.socket.io/4.5.1/socket.io.min.js"></script> <!-- Asegúrate de que esta versión sea compatible -->
+</head>
+<body>
+    <div class="container">
+        <h1>Temperatura y Humedad</h1>
+        <canvas id="temperatureGauge" class="gauge"></canvas>
+        <canvas id="humidityGauge" class="gauge"></canvas>
+    </div>
+
+    <script>
+        function createGauge(ctx, label) {
+            return new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: [label],
+                    datasets: [{
+                        data: [0, 100],
+                        backgroundColor: ['#FF6384', '#E0E0E0'],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    circumference: 180,
+                    rotation: -90,
+                    cutoutPercentage: 70,
+                    tooltips: { enabled: false },
+                    animation: {
+                        animateRotate: true,
+                        animateScale: false
+                    }
+                }
+            });
+        }
+
+        function updateGauge(gauge, value) {
+            gauge.data.datasets[0].data[0] = value;
+            gauge.data.datasets[0].data[1] = 100 - value;
+            gauge.update();
+        }
+
+        // Create gauges
+        const temperatureGaugeCtx = document.getElementById('temperatureGauge').getContext('2d');
+        const humidityGaugeCtx = document.getElementById('humidityGauge').getContext('2d');
+        const temperatureGauge = createGauge(temperatureGaugeCtx, 'Temperatura');
+        const humidityGauge = createGauge(humidityGaugeCtx, 'Humedad');
+
+        // Connect to Socket.IO
+        const token = localStorage.getItem('token');
+        if (token) {
+            const socket = io('http://localhost:8080', {
+                query: { token }
+            });
+
+            socket.on('connect', () => {
+                console.log('Connected to Socket.IO server');
+            });
+
+            socket.on('dht11Data', (data) => {
+                console.log('Data received from server:', data);
+
+                // Ensure data is an array and process each item
+                if (Array.isArray(data) && data.length > 0) {
+                    const latestData = data[data.length - 1];
+                    if (latestData.temperature !== undefined) {
+                        updateGauge(temperatureGauge, parseFloat(latestData.temperature));
+                    }
+                    if (latestData.humidity !== undefined) {
+                        updateGauge(humidityGauge, parseFloat(latestData.humidity));
+                    }
+                }
+            });
+
+            socket.on('disconnect', () => {
+                console.log('Disconnected from Socket.IO server');
+            });
+
+            socket.on('error', (error) => {
+                console.error('Socket.IO Error:', error);
+            });
+        } else {
+            console.error('Token not found');
+        }
+    </script>
+</body>
+</html>
