@@ -17,7 +17,7 @@ import axios from 'axios';
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 8080;
+const PORT = process.env.PORT || 7070;
 
 app.use(cors());
 app.use(express.json());
