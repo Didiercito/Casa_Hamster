@@ -84,7 +84,7 @@ io.on('connection', (socket) => {
 
 async function sendDataToClients() {
   try {
-    const response = await axios.get('http://localhost:8080/api/v1/dht11/all');
+    const response = await axios.get('http://localhost:7070/api/v1/dht11/all');
     const { data } = response.data;
 
     const filteredData = data.map((item: any) => ({
@@ -100,4 +100,4 @@ async function sendDataToClients() {
 
 setInterval(sendDataToClients, 2000);
 
-console.log(`WebSocket server is running on ws://localhost:${PORT}`);
+console.log(`WebSocket server is running on http://localhost:${PORT}`);
