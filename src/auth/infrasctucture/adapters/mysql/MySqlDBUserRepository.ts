@@ -12,7 +12,7 @@ export class MysqlUserRepository implements UserRepository {
 
     async login(email: string, password: string): Promise<User | null> {
         const connection = await testConnection();
-        const sql = 'SELECT * FROM users WHERE email = ?';
+        const sql = 'SELECT * FROM Users WHERE email = ?';
         const [rows] = await connection.execute(sql, [email]);
         const users = rows as any[];
 
@@ -26,7 +26,7 @@ export class MysqlUserRepository implements UserRepository {
 
     async getAllUsers(): Promise<User[]> {
         const connection = await testConnection();
-        const sql = 'SELECT * FROM users';
+        const sql = 'SELECT * FROM Users';
         const [rows] = await connection.execute(sql);
         const users = rows as any[];
 
@@ -43,19 +43,19 @@ export class MysqlUserRepository implements UserRepository {
 
     async logout(token: string): Promise<void> {
         const connection = await testConnection();
-        const sql = 'UPDATE users SET token = NULL WHERE token = ?'; 
+        const sql = 'UPDATE Users SET token = NULL WHERE token = ?'; 
         await connection.execute(sql, [token]);
     }
 
     async updateToken(id: string, token: string | null): Promise<void> {
         const connection = await testConnection();
-        const sql = 'UPDATE users SET token = ? WHERE id = ?';
+        const sql = 'UPDATE Users SET token = ? WHERE id = ?';
         await connection.execute(sql, [token, id]);
     }
 
     async getById(id: string): Promise<User | null> {
         const connection = await testConnection();
-        const sql = 'SELECT * FROM users WHERE id = ?';
+        const sql = 'SELECT * FROM Users WHERE id = ?';
         const [rows] = await connection.execute(sql, [id]);
         const users = rows as any[];
     
@@ -73,14 +73,14 @@ export class MysqlUserRepository implements UserRepository {
         const mappedAnimals = animals.map(animal => new Animal(
             animal.id,
             animal.name,
-            animal.breed,         // Verifica que estos campos correspondan
+            animal.breed,
             animal.species,
             animal.age,
             animal.gender,
             animal.color,
             animal.size,
-            animal.ownerId,       // Asegúrate de que `ownerId` esté presente
-            animal.notes          // Verifica que `notes` sea una cadena
+            animal.ownerId,       
+            animal.notes          
         ));
     
         return new User(user.id, user.name, user.lastname, user.email, user.password, mappedAnimals, user.token);
