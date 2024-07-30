@@ -27,11 +27,13 @@ export class GetUserByIdController {
                 animals: user.animals.map((animal: Animal) => ({
                     id: animal.id,
                     name: animal.name,
+                    breed: animal.breed,
                     species: animal.species,
+                    age: animal.age,
                     gender: animal.gender,
                     color: animal.color,
                     size: animal.size,
-                    notes: animal.notes
+                    notes: animal.notes // Asegúrate de que este campo sea una cadena
                 }))
             };
 

@@ -58,30 +58,32 @@ export class MysqlUserRepository implements UserRepository {
         const sql = 'SELECT * FROM users WHERE id = ?';
         const [rows] = await connection.execute(sql, [id]);
         const users = rows as any[];
-
+    
         if (users.length === 0) {
             return null;
         }
-
+    
         const user = users[0];
-
+    
+        // Asegúrate de que todos los datos se recuperan correctamente
         const animalSql = 'SELECT * FROM animals WHERE ownerId = ?';
         const [animalsRows] = await connection.execute(animalSql, [id]);
         const animals = animalsRows as any[];
-
+    
         const mappedAnimals = animals.map(animal => new Animal(
             animal.id,
             animal.name,
-            animal.type,
-            animal.age,
-            animal.userId,
-            animal.breed,
+            animal.breed,         // Verifica que estos campos correspondan
             animal.species,
+            animal.age,
             animal.gender,
             animal.color,
-            animal.notes
+            animal.size,
+            animal.ownerId,       // Asegúrate de que `ownerId` esté presente
+            animal.notes          // Verifica que `notes` sea una cadena
         ));
-
+    
         return new User(user.id, user.name, user.lastname, user.email, user.password, mappedAnimals, user.token);
     }
+    
 }
