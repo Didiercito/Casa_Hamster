@@ -6,7 +6,7 @@ import { testConnection } from '../../../../database/mysql/mysqldb';
 export class MysqlUserRepository implements UserRepository {
     async register(user: User): Promise<void> {
         const connection = await testConnection();
-        const sql = 'INSERT INTO users (name, lastname, email, password) VALUES (?, ?, ?, ?)';
+        const sql = 'INSERT INTO Users (name, lastname, email, password) VALUES (?, ?, ?, ?)';
         await connection.execute(sql, [user.name, user.lastname, user.email, user.password]);
     }
 

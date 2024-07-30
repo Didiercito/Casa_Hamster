@@ -88,9 +88,13 @@ async function sendDataToClients() {
     const { data } = response.data;
 
     const filteredData = data.map((item: any) => ({
+      
       temperature: item.temperature,
       humidity: item.humidity
     }));
+
+
+   
 
     io.emit('dht11Data', filteredData);
   } catch (error) {
@@ -100,4 +104,4 @@ async function sendDataToClients() {
 
 setInterval(sendDataToClients, 2000);
 
-console.log(`WebSocket server is running on http://localhost:${PORT}`);
+// console.log(`WebSocket server is running on http://localhost:${PORT}`);

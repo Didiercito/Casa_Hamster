@@ -1,4 +1,5 @@
 import mqtt, { MqttClient } from 'mqtt';
+import WebsocketService from '../Socekt.io/Socke.io';
 import dotenv from 'dotenv';
 import { SaveDHT11DataUseCase } from '../../dht11/application/SaveDHT11DataUseCase';
 import { DHT11 } from '../../dht11/domain/dht11';
@@ -15,9 +16,11 @@ export class MqttService {
     private mqttPort: number,
     private mqttUser: string,
     private mqttPassword: string,
-    private saveDHT11DataUseCase: SaveDHT11DataUseCase
-  ) {}
-
+    private saveDHT11DataUseCase: SaveDHT11DataUseCase,
+   
+  ) 
+  {}
+  private externalWebsocket = new WebsocketService()
   public connect(): void {
     const options = {
       port: this.mqttPort,
@@ -41,7 +44,7 @@ export class MqttService {
     this.client.on('message', async (topic: string, message: Buffer) => {
       const messageString = message.toString();
       // console.log('Mensaje recibido:', messageString);
-
+     await this.externalWebsocket.sendMessage("dataDHT11", messageString);
       if (this.onMessageCallback) {
         this.onMessageCallback(messageString);
       }
@@ -55,7 +58,7 @@ export class MqttService {
         ) {
           const dht11Data = new DHT11(data.temperature, data.humidity);
           await this.saveDHT11DataUseCase.execute(dht11Data);
-          console.log('Datos guardados correctamente en la base de datos');
+          // console.log('Datos guardados correctamente en la base de datos');
         } else {
           console.warn('Datos incompletos recibidos:', data);
         }

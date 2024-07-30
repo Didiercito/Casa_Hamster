@@ -24,7 +24,8 @@
     "mqtt": "^5.8.1",
     "mysql2": "^3.10.2",
     "node-webcam": "^0.8.2",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "socket.io-client": "^4.7.5"
   },
   "devDependencies": {
     "@types/amqplib": "^0.10.5",
